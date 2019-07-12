@@ -1,6 +1,6 @@
 <template>
-  <div v-bind:style="{ left: x + 'px', top: y + 'px' }">
-    <div class="speech-bubble">NOT ALL MEN</div>
+  <div v-bind:style="{ left: x + 'px', top: y + 'px', 'z-index': z, position: 'fixed'}">
+    <div v-if="speaking" class="speech-bubble">NOT ALL MEN</div>
     🏃
   </div>
 </template>
@@ -8,16 +8,14 @@
 <script>
 export default {
   name: "CorrectMan",
-  props: {
-    msg: String
-  },
   data: () => ({
     x: window.innerWidth / 2 - 130 / 2,
     y: window.innerHeight / 2 - 130 / 2,
     up: false,
     left: false,
     down: false,
-    right: false
+    right: false,
+    speaking: false,
   }),
   created() {
     window.addEventListener("keydown", e => {
@@ -32,6 +30,9 @@ export default {
       }
       if (e.keyCode === 65 /* a */) {
         this.left = true;
+      }
+      if (e.keyCode === 32 /* a */) {
+        this.speaking = !this.speaking;
       }
     });
 
@@ -66,7 +67,7 @@ export default {
       if (this.left) {
         this.x = this.x - 10;
       }
-
+      this.z = this.y
       window.requestAnimationFrame(this.gameLoop);
     }
   }
@@ -74,23 +75,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 @import url("https://fonts.googleapis.com/css?family=Saira+Semi+Condensed:700&display=swap");
-div {
-  position: fixed;
-  font-size: 130px;
-}
-
-body {
-  background-color: #5f5b66;
-  background-size: 100vw 100vh;
-}
 
 .speech-bubble {
   position: relative;
   background: #e5cdc0;
-  margin-bottom: -200px;
-  bottom: 200px;
+  right: 80px;
+  margin-bottom: -155px;
+  bottom: 165px;
   width: 280px;
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
@@ -114,4 +107,5 @@ body {
   margin-left: -22px;
   margin-bottom: -22px;
 }
+
 </style>
