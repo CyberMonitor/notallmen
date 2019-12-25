@@ -1,13 +1,28 @@
 <template>
-  <div v-bind:style="{ left: x + 'px', top: y + 'px', 'z-index': z, position: 'fixed'}">
+  <div
+    style="'z-index': 0"
+    v-bind:style="{
+      left: x + 'px',
+      top: y + 'px',
+      'z-index': y,
+      position: 'fixed'
+    }"
+  >
     <div v-if="speaking" class="speech-bubble">NOT ALL MEN</div>
-    🏃
+    <div v-bind:style="{ opacity: this.health }">
+      <div v-if="movingLeft">🏃🏻‍♂️</div>
+      <div class="flipped" v-else-if="movingRight">🏃🏻‍♂️</div>
+      <div v-else>🧍🏻‍♂️</div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "CorrectMan",
+  props: {
+    womanLocations: Array
+  },
   data: () => ({
     x: window.innerWidth / 2 - 130 / 2,
     y: window.innerHeight / 2 - 130 / 2,
@@ -16,6 +31,7 @@ export default {
     down: false,
     right: false,
     speaking: false,
+    health: 1 //float, goes from 1 to 0
   }),
   created() {
     window.addEventListener("keydown", e => {
@@ -32,7 +48,7 @@ export default {
         this.left = true;
       }
       if (e.keyCode === 32 /* a */) {
-        this.speaking = !this.speaking;
+        this.correct();
       }
     });
 
@@ -53,22 +69,54 @@ export default {
 
     window.requestAnimationFrame(this.gameLoop);
   },
+  computed: {
+    movingLeft: function() {
+      return !this.speaking && (this.left || (this.up && !this.right));
+    },
+    movingRight: function() {
+      return !this.speaking && (this.right || (this.down && !this.left));
+    }
+  },
   methods: {
     gameLoop() {
-      if (this.up) {
-        this.y = this.y - 10;
+      if (!this.speaking) {
+        if (this.up) {
+          this.y = this.y - 10;
+        }
+        if (this.right) {
+          this.x = this.x + 10;
+        }
+        if (this.down) {
+          this.y = this.y + 10;
+        }
+        if (this.left) {
+          this.x = this.x - 10;
+        }
       }
-      if (this.right) {
-        this.x = this.x + 10;
-      }
-      if (this.down) {
-        this.y = this.y + 10;
-      }
-      if (this.left) {
-        this.x = this.x - 10;
-      }
-      this.z = this.y
       window.requestAnimationFrame(this.gameLoop);
+    },
+
+    correct() {
+      if (this.isInFrontOfWoman() && this.speaking == false) {
+        this.speaking = true;
+        setTimeout(() => (this.speaking = false), 800);
+      }
+    },
+
+    isInFrontOfWoman() {
+      var collision = false;
+      this.womanLocations.forEach((womanLoc, index) => {
+        if (
+          Math.abs(womanLoc.x - this.x) < 100 &&
+          this.y - womanLoc.y < 100 &&
+          this.y - womanLoc.y > 0
+        ) {
+          collision = true;
+          this.$emit("interrupting", index);
+          this.health = 1;
+        }
+      });
+      return collision;
     }
   }
 };
@@ -107,5 +155,11 @@ export default {
   margin-left: -22px;
   margin-bottom: -22px;
 }
-
+.flipped {
+  -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
 </style>

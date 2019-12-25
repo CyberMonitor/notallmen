@@ -8,9 +8,9 @@
     }"
   >
     <transition name="fade">
-      <div v-if="speaking" class="speech-bubble">{{ messageTyped }}</div>
+      <div v-if="speaking" class="speech-bubble">{{ storyTyped }}</div>
     </transition>
-    💃
+    {{ emoji }}
   </div>
 </template>
 
@@ -23,29 +23,33 @@ export default {
     z: Number
   },
   data: () => ({
+    emoji: "",
+    interrupted: false,
     speaking: false,
-    message:
-      'Because I was considered a "party girl" I felt I deserved it. It was my fault for being there.',
-    messageWords: "",
+    story: "",
+    storyWords: "",
     currentWord: 0,
-    messageTyped: "",
+    storyTyped: "",
     typewiterPosition: 0,
     charsOnCurrentLine: 0,
-    maxCharsOnLine: 24
+    maxCharsOnLine: 23
   }),
   created() {
-    setTimeout(this.speak, 1000);
+    this.generateStory();
+    this.generateEmoji();
+    setTimeout(this.speak, 500);
   },
   methods: {
     speak() {
       this.speaking = true;
-      this.messageWords = this.message.split(" ");
+      this.storyWords = this.story.split(" ");
       this.typeWriter();
     },
+
     typeWriter() {
-      if (this.typewiterPosition < this.message.length) {
-        var charToWrite = this.message.charAt(this.typewiterPosition);
-        this.messageTyped += charToWrite;
+      if (this.typewiterPosition < this.story.length && !this.interrupted) {
+        var charToWrite = this.story.charAt(this.typewiterPosition);
+        this.storyTyped += charToWrite;
         this.typewiterPosition++;
         this.charsOnCurrentLine++;
 
@@ -53,15 +57,34 @@ export default {
           this.currentWord++;
           if (
             this.charsOnCurrentLine +
-              this.messageWords[this.currentWord].length >=
+              this.storyWords[this.currentWord].length >=
             this.maxCharsOnLine
           ) {
-            this.messageTyped += "\n";
+            this.storyTyped += "\n";
             this.charsOnCurrentLine = 0;
           }
         }
+        this.$emit("speaking");
         setTimeout(this.typeWriter, 70);
       }
+    },
+
+    generateEmoji() {
+      var emojiPool = ["🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️"];
+      var emojiIndex = Math.floor(Math.random() * emojiPool.length);
+      console.log(emojiIndex);
+      this.emoji = emojiPool[emojiIndex];
+    },
+
+    generateStory() {
+      var stories = [
+        'Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.',
+        'When I told my dad about my rape, he screamed and hit me. It was my fault for wearing that skirt.',
+        'First he bettled her. Then he hit her. Finally, he killed her. I wish she hadn\'t stayed.',
+        'I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled "run, slut!"'
+      ];
+      var storyIndex = Math.floor(Math.random() * stories.length);
+      this.story = stories[storyIndex];
     }
   }
 };
