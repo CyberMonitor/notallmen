@@ -36,13 +36,50 @@ export default {
     max_y: window.innerHeight * 0.8,
     min_x: 50,
     min_y: 100,
+    wave: 0,
+    subwave: 0, // each wave has subwaves. subwaves are 10 seconds long.
+    // at each subwave, the woman creation interval is decreased, making the
+    // wave progressively more difficult
+    subwaveLength: 15, //milliseconds
+    womanCreationIntervalTime: 2, //milliseconds. halved with each subwave. resets on new wave
     gameEnded: false
   }),
   created() {
-    this.interval = setInterval(() => this.createWoman(), 2000);
+    // //milliseconds
+    this.wave = 1;
+    this.subwave = 1;
+
+    this.womanCreationInterval = setInterval(
+      () => this.createWoman(),
+      this.womanCreationIntervalTime * 1000 //milliseconds
+    );
+    this.subwaveInterval = setInterval(
+      () => this.startNewSubwave(),
+      this.subwaveLength * 1000
+    );
   },
   methods: {
+    startNewSubwave() {
+      this.subwave += 1;
+      clearInterval(this.womanCreationInterval);
+
+      if (this.subwave == this.wave + 3) {
+        spawnComputer();
+      }
+
+      this.womanCreationInterval = setInterval(
+        () => this.createWoman(),
+        (this.womanCreationIntervalTime * 1000) / (this.subwave / 2)
+      );
+    },
+
+    spawnComputer() {},
+
     createWoman() {
+      if (this.womenLocations.length >= 5) {
+        return;
+      }
+
       do {
         var x_pos = Math.random() * (this.max_x - this.min_x) + this.min_x;
         var y_pos = Math.random() * (this.max_y - this.min_y) + this.min_y;
@@ -50,10 +87,6 @@ export default {
 
       var lady = { x: x_pos, y: y_pos, interrupted: false };
       this.womenLocations.push(lady);
-
-      if (this.womenLocations.length >= 3) {
-        clearInterval(this.interval);
-      }
     },
 
     closeToOther(x_pos, y_pos) {
@@ -88,6 +121,9 @@ export default {
       }
       this.$refs.correctMan.$destroy();
       setInterval(() => (this.gameEnded = true), 500);
+
+      clearInterval(this.womanCreationInterval);
+      clearInterval(this.subwaveInterval);
     }
   }
 };
@@ -127,5 +163,4 @@ body {
   z-index: 2000;
   /*  word-break: break-all;*/
 }
-
 </style>

@@ -72,7 +72,6 @@ export default {
     generateEmoji() {
       var emojiPool = ["🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️"];
       var emojiIndex = Math.floor(Math.random() * emojiPool.length);
-      console.log(emojiIndex);
       this.emoji = emojiPool[emojiIndex];
     },
 
@@ -80,7 +79,7 @@ export default {
       var stories = [
         'Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.',
         'When I told my dad about my rape, he screamed and hit me. It was my fault for wearing that skirt.',
-        'First he bettled her. Then he hit her. Finally, he killed her. I wish she hadn\'t stayed.',
+        'First he belittled her. Then he hit her. Finally, he killed her. I wish she hadn\'t stayed.',
         'I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled "run, slut!"'
       ];
       var storyIndex = Math.floor(Math.random() * stories.length);

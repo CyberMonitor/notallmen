@@ -97,26 +97,26 @@ export default {
     },
 
     correct() {
-      if (this.isInFrontOfWoman() && this.speaking == false) {
+      var index = this.indexOfWomanBeingInterrupted();
+      if (index != -1 && this.speaking == false) {
         this.speaking = true;
+        this.$emit("interrupting", index);
+        this.health = 1;
         setTimeout(() => (this.speaking = false), 800);
       }
     },
 
-    isInFrontOfWoman() {
-      var collision = false;
+    indexOfWomanBeingInterrupted() {
+      var returningIndex = -1;
       this.womanLocations.forEach((womanLoc, index) => {
         if (
           Math.abs(womanLoc.x - this.x) < 100 &&
           this.y - womanLoc.y < 100 &&
           this.y - womanLoc.y > 0
-        ) {
-          collision = true;
-          this.$emit("interrupting", index);
-          this.health = 1;
-        }
+        )
+          returningIndex = index;
       });
-      return collision;
+      return returningIndex;
     }
   }
 };
