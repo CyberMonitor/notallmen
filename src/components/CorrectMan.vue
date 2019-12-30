@@ -9,9 +9,17 @@
     }"
   >
     <div v-if="speaking" class="speech-bubble">NOT ALL MEN</div>
-    <div v-bind:style="{ opacity: this.health }">
+    <div v-if="tweeting" class="tweet-bubble">
+      @correctman posted:
+      <p>{{ tweet }}</p>
+    </div>
+    <div v-bind:style="{ opacity: Math.max(this.health, 0) }">
       <div v-if="movingLeft">🏃🏻‍♂️</div>
       <div class="flipped" v-else-if="movingRight">🏃🏻‍♂️</div>
+      <div v-else-if="tweeting">
+        <div>🧍🏻‍♂️</div>
+        <div class="laptop">💻</div>
+      </div>
       <div v-else>🧍🏻‍♂️</div>
     </div>
   </div>
@@ -21,7 +29,8 @@
 export default {
   name: "CorrectMan",
   props: {
-    womanLocations: Array
+    womanLocations: Array,
+    items: Array
   },
   data: () => ({
     x: window.innerWidth / 2 - 130 / 2,
@@ -31,7 +40,9 @@ export default {
     down: false,
     right: false,
     speaking: false,
-    health: 1 //float, goes from 1 to 0
+    tweeting: false,
+    tweet: "",
+    health: 1 //float, goes from 1 to -0.1. Goes into the negatives a little to make it feel "fair" to the player.
   }),
   created() {
     window.addEventListener("keydown", e => {
@@ -48,7 +59,7 @@ export default {
         this.left = true;
       }
       if (e.keyCode === 32 /* a */) {
-        this.correct();
+        this.interract();
       }
     });
 
@@ -71,15 +82,28 @@ export default {
   },
   computed: {
     movingLeft: function() {
-      return !this.speaking && (this.left || (this.up && !this.right));
+      return (
+        !this.speaking &&
+        !this.tweeting &&
+        (this.left || (this.up && !this.right))
+      );
     },
     movingRight: function() {
-      return !this.speaking && (this.right || (this.down && !this.left));
+      return (
+        !this.speaking &&
+        !this.tweeting &&
+        (this.right || (this.down && !this.left))
+      );
+    },
+    moving: function() {
+      return (
+        !this.speaking && (this.up || this.down || this.left || this.right)
+      );
     }
   },
   methods: {
     gameLoop() {
-      if (!this.speaking) {
+      if (!this.speaking && !this.tweeting) {
         if (this.up) {
           this.y = this.y - 10;
         }
@@ -96,17 +120,33 @@ export default {
       window.requestAnimationFrame(this.gameLoop);
     },
 
-    correct() {
-      var index = this.indexOfWomanBeingInterrupted();
+    interract() {
+      if (this.health <= -0.1) {
+        return;
+      }
+      
+      index = this.indexOfInteractable();
+      if (index != -1 && this.speaking == false) {
+        this.tweeting = true;
+        this.$emit("tweeting");
+        this.health = 1;
+        setTimeout(() => (this.tweeting = false), 2000);
+        this.generateTweet();
+        return;
+      }
+
+      var index = this.indexOfWoman();
       if (index != -1 && this.speaking == false) {
         this.speaking = true;
         this.$emit("interrupting", index);
         this.health = 1;
+        const sound = new Audio(require("@/assets/manspeak.mp3")).play();
         setTimeout(() => (this.speaking = false), 800);
+        return;
       }
     },
 
-    indexOfWomanBeingInterrupted() {
+    indexOfWoman() {
       var returningIndex = -1;
       this.womanLocations.forEach((womanLoc, index) => {
         if (
@@ -117,6 +157,37 @@ export default {
           returningIndex = index;
       });
       return returningIndex;
+    },
+
+    indexOfInteractable() {
+      var returningIndex = -1;
+      this.items.forEach((itemLoc, index) => {
+        if (
+          Math.abs(itemLoc.x - this.x) < 100 &&
+          this.y - itemLoc.y < 100 &&
+          this.y - itemLoc.y > 0
+        )
+          returningIndex = index;
+      });
+      return returningIndex;
+    },
+
+    generateTweet() {
+      var tweets = [
+        "BUT WHAT ABOUT TOXIC FEMININITY?",
+        "FACTS DON'T CARE ABOUT YOUR FEELINGS!"
+      ];
+      var tweetIndex = Math.floor(Math.random() * tweets.length);
+      this.tweet = tweets[tweetIndex];
+    },
+
+    reset() {
+      this.health = 1;
+      this.x = window.innerWidth / 2 - 130 / 2;
+      this.y = window.innerHeight / 2 - 130 / 2;
+      this.speaking = false;
+      this.tweeting = false;
+      this.tweet = "";
     }
   }
 };
@@ -161,5 +232,29 @@ export default {
   -o-transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1);
+}
+.tweet-bubble {
+  position: relative;
+  background: #e5cdc0;
+  right: 80px;
+  margin-bottom: -155px;
+  bottom: 150px;
+  width: 280px;
+  height: 155px;
+  font-family: "Saira Semi Condensed", sans-serif;
+  font-size: 0.2em;
+  text-align: center;
+  vertical-align: center;
+  color: #5f5b66;
+  line-height: 29px;
+  border-radius: 1%;
+  padding: 5px 10px 5px 10px;
+  box-sizing: border-box;
+}
+.laptop {
+  position: relative;
+  font-size: 0.5em;
+  bottom: 2em;
+  left: 0.25em;
 }
 </style>

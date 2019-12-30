@@ -10,7 +10,9 @@
     <transition name="fade">
       <div v-if="speaking" class="speech-bubble">{{ storyTyped }}</div>
     </transition>
-    {{ emoji }}
+    <transition name="fade">
+      <div v-if="showEmoji">{{ emoji }}</div>
+    </transition>
   </div>
 </template>
 
@@ -20,12 +22,22 @@ export default {
   props: {
     x: Number,
     y: Number,
-    z: Number
+    z: Number,
+    numWomen: Number,
+    indexInWomen: Number
+  },
+  watch: {
+    numWomen: function(newVal, oldVal) {
+      if (newVal <= 4) {
+        this.playingSound = true;
+      } else this.playingSound = false;
+    }
   },
   data: () => ({
     emoji: "",
     interrupted: false,
     speaking: false,
+    showEmoji: false,
     story: "",
     storyWords: "",
     currentWord: 0,
@@ -37,7 +49,8 @@ export default {
   created() {
     this.generateStory();
     this.generateEmoji();
-    setTimeout(this.speak, 500);
+    setTimeout(() => this.showEmoji = true, 100);
+    setTimeout(this.speak, 700);
   },
   methods: {
     speak() {
@@ -52,6 +65,12 @@ export default {
         this.storyTyped += charToWrite;
         this.typewiterPosition++;
         this.charsOnCurrentLine++;
+
+        if (!charToWrite.match(/^[.,:!? ]/) && this.indexInWomen >= 0 && this.indexInWomen <= 4) {
+          const sound = new Audio(require("@/assets/womanspeak1.mp3"));
+          sound.volume = Math.max(1 - this.numWomen / 6, 0.25);
+          sound.play();
+        }
 
         if (charToWrite == " ") {
           this.currentWord++;
@@ -77,13 +96,20 @@ export default {
 
     generateStory() {
       var stories = [
-        'Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.',
-        'When I told my dad about my rape, he screamed and hit me. It was my fault for wearing that skirt.',
-        'First he belittled her. Then he hit her. Finally, he killed her. I wish she hadn\'t stayed.',
+        "Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.",
+        "When I told my dad about my rape, he screamed and hit me. It was my fault for wearing that skirt.",
+        "First he belittled her. Then he hit her. Finally, he killed her. I wish she hadn't stayed.",
         'I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled "run, slut!"'
       ];
       var storyIndex = Math.floor(Math.random() * stories.length);
       this.story = stories[storyIndex];
+    },
+
+    destroy() {
+      this.speaking = false;
+      this.interrupted = true;
+      setTimeout(() => this.showEmoji = false, 300);
+      setTimeout(() => this.$destroy(), 500);
     }
   }
 };
