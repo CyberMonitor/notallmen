@@ -3,7 +3,7 @@
     v-bind:style="{
       left: x + 'px',
       top: y + 'px',
-      'z-index': z,
+      'z-index': Math.floor(y),
       position: 'fixed'
     }"
   >
@@ -22,9 +22,9 @@ export default {
   props: {
     x: Number,
     y: Number,
-    z: Number,
     numWomen: Number,
-    indexInWomen: Number
+    indexInWomen: Number,
+    wave: Number
   },
   watch: {
     numWomen: function(newVal, oldVal) {
@@ -35,6 +35,7 @@ export default {
   },
   data: () => ({
     emoji: "",
+    emojiPool: ["🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️"],
     interrupted: false,
     speaking: false,
     showEmoji: false,
@@ -47,9 +48,10 @@ export default {
     maxCharsOnLine: 23
   }),
   created() {
+
     this.generateStory();
     this.generateEmoji();
-    setTimeout(() => this.showEmoji = true, 100);
+    setTimeout(() => (this.showEmoji = true), 100);
     setTimeout(this.speak, 700);
   },
   methods: {
@@ -66,7 +68,11 @@ export default {
         this.typewiterPosition++;
         this.charsOnCurrentLine++;
 
-        if (!charToWrite.match(/^[.,:!? ]/) && this.indexInWomen >= 0 && this.indexInWomen <= 4) {
+        if (
+          !charToWrite.match(/^[.,:!? ]/) &&
+          this.indexInWomen >= 0 &&
+          this.indexInWomen <= 4
+        ) {
           const sound = new Audio(require("@/assets/womanspeak1.mp3"));
           sound.volume = Math.max(1 - this.numWomen / 6, 0.25);
           sound.play();
@@ -89,17 +95,22 @@ export default {
     },
 
     generateEmoji() {
-      var emojiPool = ["🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️"];
-      var emojiIndex = Math.floor(Math.random() * emojiPool.length);
-      this.emoji = emojiPool[emojiIndex];
+      var emojiIndex = Math.floor(Math.random() * this.emojiPool.length);
+      this.emoji = this.emojiPool[emojiIndex];
     },
 
     generateStory() {
       var stories = [
         "Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.",
-        "When I told my dad about my rape, he screamed and hit me. It was my fault for wearing that skirt.",
+        "When I told my dad about what happened, he hit me. It was my fault for wearing that skirt.",
         "First he belittled her. Then he hit her. Finally, he killed her. I wish she hadn't stayed.",
-        'I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled "run, slut!"'
+        "I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled \"run, slut!\"",
+        "I was at a work Christmas party. The CEO kept staring at my cleavage while we talked.",
+        "I was 16, on the bus. An older man sat beside me and grabbed my breasts. I was too afraid to speak up.",
+        "During an argument, my husband pushed me down a staircase and broke my arm. I stayed for the kids.",
+        "My girlfriend and I were walking down the street when a man driving by yelled \"dykes!\" at us.",
+        "When I told my parents about what my uncle did, they told me to stay silent. That I would hurt the family.",
+        "I was at a bar. He forced me onto his lap and kissed me. All his friends laughed."
       ];
       var storyIndex = Math.floor(Math.random() * stories.length);
       this.story = stories[storyIndex];
@@ -108,7 +119,7 @@ export default {
     destroy() {
       this.speaking = false;
       this.interrupted = true;
-      setTimeout(() => this.showEmoji = false, 300);
+      setTimeout(() => (this.showEmoji = false), 300);
       setTimeout(() => this.$destroy(), 500);
     }
   }
@@ -129,6 +140,7 @@ export default {
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
   font-size: 0.2em;
+  font-weight: 600;
   text-align: center;
   vertical-align: center;
   color: #5f5b66;

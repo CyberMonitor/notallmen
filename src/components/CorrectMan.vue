@@ -1,24 +1,23 @@
 <template>
   <div
-    style="'z-index': 0"
     v-bind:style="{
       left: x + 'px',
       top: y + 'px',
-      'z-index': y,
+      'z-index': Math.floor(y),
       position: 'fixed'
     }"
   >
     <div v-if="speaking" class="speech-bubble">NOT ALL MEN</div>
-    <div v-if="tweeting" class="tweet-bubble">
-      @correctman posted:
-      <p>{{ tweet }}</p>
+    <div v-if="yelling" class="yelling-bubble">
+      {{ yellingText }}
     </div>
     <div v-bind:style="{ opacity: Math.max(this.health, 0) }">
       <div v-if="movingLeft">🏃🏻‍♂️</div>
       <div class="flipped" v-else-if="movingRight">🏃🏻‍♂️</div>
-      <div v-else-if="tweeting">
+      <div v-else-if="yelling">
         <div>🧍🏻‍♂️</div>
-        <div class="laptop">💻</div>
+        <div v-if="os == 1" class="megaphone-windows">📣</div>
+        <div v-else class="megaphone-other">📣</div>
       </div>
       <div v-else>🧍🏻‍♂️</div>
     </div>
@@ -40,11 +39,15 @@ export default {
     down: false,
     right: false,
     speaking: false,
-    tweeting: false,
-    tweet: "",
-    health: 1 //float, goes from 1 to -0.1. Goes into the negatives a little to make it feel "fair" to the player.
+    yelling: false,
+    yellingText: "",
+    health: 1, //float, goes from 1 to -0.1. Goes into the negatives a little to make it feel "fair" to the player.
+    os: 0
   }),
   created() {
+    if (navigator.appVersion.indexOf("Win") != -1) {
+      this.os = 1;
+    }
     window.addEventListener("keydown", e => {
       if (e.keyCode === 87 /* w */) {
         this.up = true;
@@ -84,14 +87,14 @@ export default {
     movingLeft: function() {
       return (
         !this.speaking &&
-        !this.tweeting &&
+        !this.yelling &&
         (this.left || (this.up && !this.right))
       );
     },
     movingRight: function() {
       return (
         !this.speaking &&
-        !this.tweeting &&
+        !this.yelling &&
         (this.right || (this.down && !this.left))
       );
     },
@@ -103,7 +106,7 @@ export default {
   },
   methods: {
     gameLoop() {
-      if (!this.speaking && !this.tweeting) {
+      if (!this.speaking && !this.yelling) {
         if (this.up) {
           this.y = this.y - 10;
         }
@@ -124,13 +127,13 @@ export default {
       if (this.health <= -0.1) {
         return;
       }
-      
+
       index = this.indexOfInteractable();
       if (index != -1 && this.speaking == false) {
-        this.tweeting = true;
-        this.$emit("tweeting");
+        this.yelling = true;
+        this.$emit("yelling");
         this.health = 1;
-        setTimeout(() => (this.tweeting = false), 2000);
+        setTimeout(() => (this.yelling = false), 2000);
         this.generateTweet();
         return;
       }
@@ -175,10 +178,12 @@ export default {
     generateTweet() {
       var tweets = [
         "BUT WHAT ABOUT TOXIC FEMININITY?",
-        "FACTS DON'T CARE ABOUT YOUR FEELINGS!"
+        "FACTS DON'T CARE ABOUT YOUR FEELINGS!",
+        "VIOLENCE AGAINST MEN IS REAL TOO",
+        "YOU'RE JUST SEEKING ATTENTION!"
       ];
       var tweetIndex = Math.floor(Math.random() * tweets.length);
-      this.tweet = tweets[tweetIndex];
+      this.yellingText = tweets[tweetIndex];
     },
 
     reset() {
@@ -186,8 +191,8 @@ export default {
       this.x = window.innerWidth / 2 - 130 / 2;
       this.y = window.innerHeight / 2 - 130 / 2;
       this.speaking = false;
-      this.tweeting = false;
-      this.tweet = "";
+      this.yelling = false;
+      this.yellingText = "";
     }
   }
 };
@@ -206,6 +211,7 @@ export default {
   width: 280px;
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
+  font-weight: 700;
   font-size: 0.5em;
   text-align: center;
   vertical-align: center;
@@ -233,28 +239,46 @@ export default {
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
-.tweet-bubble {
+.yelling-bubble {
   position: relative;
   background: #e5cdc0;
   right: 80px;
   margin-bottom: -155px;
-  bottom: 150px;
+  bottom: 165px;
   width: 280px;
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
-  font-size: 0.2em;
+  font-weight: 700;
+  font-size: 0.3em;
   text-align: center;
   vertical-align: center;
   color: #5f5b66;
-  line-height: 29px;
+  line-height: 45px;
   border-radius: 1%;
-  padding: 5px 10px 5px 10px;
-  box-sizing: border-box;
 }
-.laptop {
+.yelling-bubble:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 22px solid transparent;
+  border-top-color: #e5cdc0;
+  border-bottom: 0;
+  margin-left: -22px;
+  margin-bottom: -22px;
+}
+.megaphone-windows {
   position: relative;
   font-size: 0.5em;
-  bottom: 2em;
-  left: 0.25em;
+  bottom: 2.3em;
+  left: 0.9em;
+}
+.megaphone-other {
+  position: relative;
+  font-size: 0.5em;
+  bottom: 2.3em;
+  right: 0.9em;
 }
 </style>

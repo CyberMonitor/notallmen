@@ -3,7 +3,7 @@
     <div v-if="gameBegun" class="main-game">
       <CorrectMan
         @interrupting="interruptWoman"
-        @tweeting="tweet"
+        @yelling="yell"
         v-bind:womanLocations="womenLocations"
         v-bind:items="items"
         ref="correctMan"
@@ -13,9 +13,9 @@
           @speaking="decreaseCorrectMansHealth"
           v-bind:x="woman.x"
           v-bind:y="woman.y"
-          v-bind:z="Math.floor(woman.y)"
           v-bind:numWomen="womenLocations.length"
           v-bind:indexInWomen="womenLocations.indexOf(woman)"
+          v-bind:wave="wave"
           ref="women"
         />
       </span>
@@ -44,14 +44,14 @@
 
         <div style="position: relative">
           <p
-            style="position: fixed; bottom: 1em; width:100%; text-align: center; font-size: 0.6em"
+            style="font-weight: 500; position: fixed; bottom: 1em; width:100%; text-align: center; font-size: 0.6em"
           >
             TW: Contains descriptions of sexual abuse and violence.
           </p>
         </div>
       </div>
     </transition>
-    <Achievements/>
+    <Achievements ref="achievements" />
   </div>
 </template>
 
@@ -86,7 +86,8 @@ export default {
     // wave progressively more difficult
     subwaveLength: 10, //milliseconds
     womanCreationIntervalTime: 2, //milliseconds. halved with each subwave. resets on new wave
-    gameEnded: false
+    gameEnded: false,
+    wokeAchievementPossible: true
   }),
   created() {
     window.addEventListener("click", this.startGame);
@@ -105,6 +106,7 @@ export default {
       window.removeEventListener("click", this.startGame);
       window.removeEventListener("keydown", this.startGame);
       this.startNewWave();
+      this.spawnMegaphone();
     },
 
     resetGame() {
@@ -114,7 +116,6 @@ export default {
       this.womenLocations = [];
       this.items = [];
       this.$refs.correctMan.reset();
-      window.removeEventListener("click", this.resetGame);
       window.removeEventListener("keydown", this.resetGame);
       this.gameBegun = true;
       this.gameEnded = false;
@@ -126,7 +127,7 @@ export default {
       clearInterval(this.womanCreationInterval);
 
       if (this.subwave == 3 + this.wave - 1) {
-        this.spawnComputer();
+        this.spawnMegaphone();
       }
 
       this.womanCreationInterval = setInterval(
@@ -152,12 +153,12 @@ export default {
       );
     },
 
-    spawnComputer() {
+    spawnMegaphone() {
       var x_pos = Math.random() * (this.max_x - this.min_x) + this.min_x;
       var y_pos = Math.random() * (this.max_y - this.min_y) + this.min_y;
-      var computer = { x: x_pos, y: y_pos, emoji: "💻" };
-      this.items.push(computer);
-      new Audio(require("@/assets/computerspawn.mp3")).play();
+      var megaphone = { x: x_pos, y: y_pos, emoji: "📣" };
+      this.items.push(megaphone);
+      new Audio(require("@/assets/megaphonespawn.mp3")).play();
     },
 
     createWoman() {
@@ -188,19 +189,40 @@ export default {
     },
 
     interruptWoman(womanIndex) {
+      if (
+        this.$refs.women[womanIndex].emoji == "🧍🏽‍♀️" ||
+        this.$refs.women[womanIndex].emoji == "🧍🏾‍♀️" ||
+        this.$refs.women[womanIndex].emoji == "🧍🏿‍♀️"
+      ) {
+        this.wokeAchievementPossible = false;
+      }
+      if (this.$refs.women[womanIndex].typewiterPosition == 0) {
+        this.$refs.achievements.unlockAchievement("Machine");
+      }
+
       this.$refs.women[womanIndex].destroy();
       setTimeout(() => this.womenLocations.splice(womanIndex, 1), 500);
       this.womenCorrected += 1;
+
+      if (this.womenCorrected == 100) {
+        this.$refs.achievements.unlockAchievement("Free speech warrior");
+      } else if (this.womenCorrected == 50) {
+        this.$refs.achievements.unlockAchievement("Red pilled");
+      } else if (this.womenCorrected == 25) {
+        this.$refs.achievements.unlockAchievement("Alpha");
+      } else if (this.womenCorrected == 10) {
+        this.$refs.achievements.unlockAchievement("Hero");
+      }
     },
 
-    tweet() {
+    yell() {
       this.items = [];
-      for (var i = 0; i < this.$refs.women.length; i++) {
-        this.$refs.women[i].destroy();
-        this.womenCorrected += 1;
+      var totalWomen = this.$refs.women.length;
+      for (var i = 0; i < totalWomen; i++) {
+        this.interruptWoman(i);
       }
-      setTimeout(() => (this.womenLocations = []), 500);
-      new Audio(require("@/assets/mantweeting.mp3")).play();
+      setTimeout(() => this.womenLocations = [], 500);
+      new Audio(require("@/assets/manyelling.mp3")).play();
       this.startNewWave();
     },
 
@@ -222,17 +244,21 @@ export default {
         this.gameEnded = true;
       }, 500);
       setTimeout(() => {
-        window.addEventListener("click", this.resetGame);
         window.addEventListener("keydown", this.resetGame);
       }, 1500);
+
+      if (this.wokeAchievementPossible && this.womenCorrected >= 1) {
+        this.$refs.achievements.unlockAchievement("Woke");
+      }
+      if (this.womenCorrected == 0) {
+        this.$refs.achievements.unlockAchievement("One of a kind");
+      }
     }
   }
 };
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,700");
-
 .main-game {
   font-size: 8em;
 }
@@ -262,6 +288,7 @@ body {
   text-align: center;
   z-index: 1000;
   font-size: 2.5em;
+  font-weight: 600;
   /*  word-break: break-all;*/
 }
 
