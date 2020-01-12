@@ -106,7 +106,6 @@ export default {
       window.removeEventListener("click", this.startGame);
       window.removeEventListener("keydown", this.startGame);
       this.startNewWave();
-      this.spawnMegaphone();
     },
 
     resetGame() {
