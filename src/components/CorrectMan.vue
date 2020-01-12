@@ -12,14 +12,12 @@
       {{ yellingText }}
     </div>
     <div v-bind:style="{ opacity: Math.max(this.health, 0) }">
-      <div v-if="movingLeft">🏃🏻‍♂️</div>
-      <div class="flipped" v-else-if="movingRight">🏃🏻‍♂️</div>
+      <div v-if="movingLeft"><img src="@/assets/images/correctmanleft.png"></div>
+      <div v-else-if="movingRight"><img src="@/assets/images/correctmanright.png"></div>
       <div v-else-if="yelling">
-        <div>🧍🏻‍♂️</div>
-        <div v-if="os == 1" class="megaphone-windows">📣</div>
-        <div v-else class="megaphone-other">📣</div>
+        <img src="@/assets/images/correctmanmegaphone.png">
       </div>
-      <div v-else>🧍🏻‍♂️</div>
+      <div v-else><img src="@/assets/images/correctman.png"></div>
     </div>
   </div>
 </template>
@@ -205,9 +203,9 @@ export default {
 .speech-bubble {
   position: relative;
   background: #e5cdc0;
-  right: 80px;
+  right: 90px;
   margin-bottom: -155px;
-  bottom: 165px;
+  bottom: 175px;
   width: 280px;
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
@@ -280,5 +278,12 @@ export default {
   font-size: 0.5em;
   bottom: 2.3em;
   right: 0.9em;
+}
+
+img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  max-height: 1.75em;
 }
 </style>

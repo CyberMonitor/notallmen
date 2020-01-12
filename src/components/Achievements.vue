@@ -40,13 +40,13 @@ export default {
     });
     this.achievements.push({
       name: "Machine",
-      emoji: "👨🏻‍💻 ",
+      emoji: "👨🏻‍💻",
       desc: "Corrected a woman before she could speak",
       unlocked: false
     });
     this.achievements.push({
-      name: "Hero",
-      emoji: "🦸‍♂️",
+      name: "SJWs Wrecked",
+      emoji: "🥀",
       desc: "Corrected 10 women",
       unlocked: false
     });

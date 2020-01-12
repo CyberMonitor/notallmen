@@ -11,7 +11,7 @@
       <div v-if="speaking" class="speech-bubble">{{ storyTyped }}</div>
     </transition>
     <transition name="fade">
-      <div v-if="showEmoji">{{ emoji }}</div>
+      <div v-if="showImage"><img :src="imgUrl(image)" /></div>
     </transition>
   </div>
 </template>
@@ -34,11 +34,11 @@ export default {
     }
   },
   data: () => ({
-    emoji: "",
-    emojiPool: ["🧍🏻‍♀️", "🧍🏼‍♀️", "🧍🏽‍♀️", "🧍🏾‍♀️", "🧍🏿‍♀️"],
+    image: "",
+    imagePool: [],
     interrupted: false,
     speaking: false,
-    showEmoji: false,
+    showImage: false,
     story: "",
     storyWords: "",
     currentWord: 0,
@@ -48,19 +48,24 @@ export default {
     maxCharsOnLine: 23
   }),
   created() {
+    for (var i = 2; i <= 12; i++) {
+      this.imagePool.push("woman" + i + ".png");
+    }
 
     this.generateStory();
-    this.generateEmoji();
-    setTimeout(() => (this.showEmoji = true), 100);
+    this.generateImage();
+    setTimeout(() => (this.showImage = true), 100);
     setTimeout(this.speak, 700);
   },
   methods: {
+    imgUrl(pic) {
+      return require("@/assets/images/" + pic);
+    },
     speak() {
       this.speaking = true;
       this.storyWords = this.story.split(" ");
       this.typeWriter();
     },
-
     typeWriter() {
       if (this.typewiterPosition < this.story.length && !this.interrupted) {
         var charToWrite = this.story.charAt(this.typewiterPosition);
@@ -94,9 +99,9 @@ export default {
       }
     },
 
-    generateEmoji() {
-      var emojiIndex = Math.floor(Math.random() * this.emojiPool.length);
-      this.emoji = this.emojiPool[emojiIndex];
+    generateImage() {
+      var imageIndex = Math.floor(Math.random() * this.imagePool.length);
+      this.image = this.imagePool[imageIndex];
     },
 
     generateStory() {
@@ -104,11 +109,11 @@ export default {
         "Because I had left my drink unattended, I felt like it was my fault. I should have been more careful.",
         "When I told my dad about what happened, he hit me. It was my fault for wearing that skirt.",
         "First he belittled her. Then he hit her. Finally, he killed her. I wish she hadn't stayed.",
-        "I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled \"run, slut!\"",
+        'I was jogging in a sports bra and shorts. A car of teenaged boys pulled up and yelled "run, slut!"',
         "I was at a work Christmas party. The CEO kept staring at my cleavage while we talked.",
         "I was 16, on the bus. An older man sat beside me and grabbed my breasts. I was too afraid to speak up.",
         "During an argument, my husband pushed me down a staircase and broke my arm. I stayed for the kids.",
-        "My girlfriend and I were walking down the street when a man driving by yelled \"dykes!\" at us.",
+        'My girlfriend and I were walking down the street when a man driving by yelled "dykes!" at us.',
         "When I told my parents about what my uncle did, they told me to stay silent. That I would hurt the family.",
         "I was at a bar. He forced me onto his lap and kissed me. All his friends laughed."
       ];
@@ -119,7 +124,7 @@ export default {
     destroy() {
       this.speaking = false;
       this.interrupted = true;
-      setTimeout(() => (this.showEmoji = false), 300);
+      setTimeout(() => (this.showImage = false), 300);
       setTimeout(() => this.$destroy(), 500);
     }
   }
@@ -127,15 +132,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 @import url("https://fonts.googleapis.com/css?family=Saira+Semi+Condensed:600&display=swap");
 
 .speech-bubble {
   position: relative;
   background: #e5cdc0;
-  right: 80px;
+  right: 90px;
   margin-bottom: -155px;
-  bottom: 165px;
+  bottom: 175px;
   width: 280px;
   height: 155px;
   font-family: "Saira Semi Condensed", sans-serif;
@@ -163,5 +168,10 @@ export default {
   border-bottom: 0;
   margin-left: -22px;
   margin-bottom: -22px;
+}
+img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 </style>

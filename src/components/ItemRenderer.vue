@@ -7,7 +7,9 @@
       position: 'fixed'
     }"
   >
-    <div class="item"><p>{{ emoji }}</p></div>
+    <div>
+      <p><img :src="imgUrl(image)" /></p>
+    </div>
   </div>
 </template>
 
@@ -18,18 +20,27 @@ export default {
     x: Number,
     y: Number,
     z: Number,
-    emoji: String
+    image: String
   },
   data: () => ({}),
   created() {},
-  methods: {}
+  methods: {
+    imgUrl(pic) {
+      return require("@/assets/images/" + pic);
+    }
+  }
 };
 </script>
 
 <style scoped>
 .item {
-  font-size: 0.5em;
   position: relative;
   top: 0.5em;
+}
+img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  /* max-height: 1em; */
 }
 </style>

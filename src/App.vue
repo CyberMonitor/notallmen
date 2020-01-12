@@ -24,7 +24,7 @@
           v-bind:x="item.x"
           v-bind:y="item.y"
           v-bind:z="Math.floor(item.y)"
-          v-bind:emoji="item.emoji"
+          v-bind:image="item.image"
         />
       </span>
     </div>
@@ -35,11 +35,11 @@
     </transition>
     <transition name="fade">
       <div v-if="!gameBegun" class="info-screen">
-        <h2 style="color: #b1e66c;">Not All Men</h2>
-        <p><span style="color: #f7c33e">WASD</span> - Move</p>
-        <p><span style="color: #f7c33e">Spacebar</span> - Correct</p>
+        <h2 style="color: #da9295;">Not All Men</h2>
+        <p><span style="color: #de9c8c">WASD</span> - Move</p>
+        <p><span style="color: #de9c8c">Spacebar</span> - Correct</p>
         <p>
-          Correct women to <span style="color: #f26f73">stay relevant!</span>
+          Correct women to <span style="color: #da9295">stay relevant!</span>
         </p>
 
         <div style="position: relative">
@@ -77,7 +77,7 @@ export default {
     womenCorrected: 0,
     items: [],
     max_x: window.innerWidth - 250,
-    max_y: window.innerHeight - 200,
+    max_y: window.innerHeight - 250,
     min_x: 100,
     min_y: 200,
     wave: 0,
@@ -106,6 +106,7 @@ export default {
       window.removeEventListener("click", this.startGame);
       window.removeEventListener("keydown", this.startGame);
       this.startNewWave();
+      this.spawnMegaphone();
     },
 
     resetGame() {
@@ -155,7 +156,7 @@ export default {
     spawnMegaphone() {
       var x_pos = Math.random() * (this.max_x - this.min_x) + this.min_x;
       var y_pos = Math.random() * (this.max_y - this.min_y) + this.min_y;
-      var megaphone = { x: x_pos, y: y_pos, emoji: "📣" };
+      var megaphone = { x: x_pos, y: y_pos, image: "megaphone.png" };
       this.items.push(megaphone);
       new Audio(require("@/assets/megaphonespawn.mp3")).play();
     },
@@ -172,6 +173,7 @@ export default {
 
       var lady = { x: x_pos, y: y_pos, interrupted: false };
       this.womenLocations.push(lady);
+      
     },
 
     closeToOther(x_pos, y_pos) {
@@ -189,9 +191,9 @@ export default {
 
     interruptWoman(womanIndex) {
       if (
-        this.$refs.women[womanIndex].emoji == "🧍🏽‍♀️" ||
-        this.$refs.women[womanIndex].emoji == "🧍🏾‍♀️" ||
-        this.$refs.women[womanIndex].emoji == "🧍🏿‍♀️"
+        this.$refs.women[womanIndex].image == "🧍🏽‍♀️" ||
+        this.$refs.women[womanIndex].image == "🧍🏾‍♀️" ||
+        this.$refs.women[womanIndex].image == "🧍🏿‍♀️"
       ) {
         this.wokeAchievementPossible = false;
       }
@@ -210,7 +212,7 @@ export default {
       } else if (this.womenCorrected == 25) {
         this.$refs.achievements.unlockAchievement("Alpha");
       } else if (this.womenCorrected == 10) {
-        this.$refs.achievements.unlockAchievement("Hero");
+        this.$refs.achievements.unlockAchievement("SJWs Wrecked");
       }
     },
 

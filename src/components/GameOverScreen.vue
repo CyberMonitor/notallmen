@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h2 style="color: #b1e66c">GAME OVER</h2>
+    <h2 style="color: #de9c8c">GAME OVER</h2>
     <p v-if="womenCorrected == 1">
       You corrected
-      <span style="color: #f7c33e">{{ womenCorrected }}</span> woman.
+      <span style="color: #de9c8c">{{ womenCorrected }}</span> woman.
     </p>
     <p v-else>
       You corrected
-      <span style="color: #f7c33e">{{ womenCorrected }}</span> women.
+      <span style="color: #de9c8c">{{ womenCorrected }}</span> women.
     </p>
     <div style="font-size: 0.6em; font-weight: 500;">
       <p v-if="womenCorrected == 0">
@@ -34,7 +34,7 @@
     </div>
     <p>
       Press any key to continue
-      <span style="color: #f26f73">fighting the good fight.</span>
+      <span style="color: #da9295">fighting the good fight.</span>
     </p>
     <div class="credit-box"><a target="_blank" href="https://twitter.com/ctrlshifti">@ctrlshifti</a></div>
   </div>
