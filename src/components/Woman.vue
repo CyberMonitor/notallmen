@@ -35,7 +35,7 @@ export default {
   },
   data: () => ({
     image: "",
-    imagePool: [],
+    numImages: 12,
     interrupted: false,
     speaking: false,
     showImage: false,
@@ -48,10 +48,6 @@ export default {
     maxCharsOnLine: 23
   }),
   created() {
-    for (var i = 2; i <= 12; i++) {
-      this.imagePool.push("woman" + i + ".png");
-    }
-
     this.generateStory();
     this.generateImage();
     setTimeout(() => (this.showImage = true), 100);
@@ -59,7 +55,7 @@ export default {
   },
   methods: {
     imgUrl(pic) {
-      return require("@/assets/images/" + pic);
+      return require("@/assets/images/woman" + pic + ".png");
     },
     speak() {
       this.speaking = true;
@@ -100,8 +96,9 @@ export default {
     },
 
     generateImage() {
-      var imageIndex = Math.floor(Math.random() * this.imagePool.length);
-      this.image = this.imagePool[imageIndex];
+      var imageNum = Math.floor(Math.random() * this.numImages + 1);
+      console.log(imageNum);
+      this.image = imageNum;
     },
 
     generateStory() {

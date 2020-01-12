@@ -190,9 +190,13 @@ export default {
 
     interruptWoman(womanIndex) {
       if (
-        this.$refs.women[womanIndex].image == "🧍🏽‍♀️" ||
-        this.$refs.women[womanIndex].image == "🧍🏾‍♀️" ||
-        this.$refs.women[womanIndex].image == "🧍🏿‍♀️"
+        this.$refs.women[womanIndex].image == "1" ||
+        this.$refs.women[womanIndex].image == "4" ||
+        this.$refs.women[womanIndex].image == "5" ||
+        this.$refs.women[womanIndex].image == "6"||
+        this.$refs.women[womanIndex].image == "8"||
+        this.$refs.women[womanIndex].image == "10"||
+        this.$refs.women[womanIndex].image == "11"
       ) {
         this.wokeAchievementPossible = false;
       }
