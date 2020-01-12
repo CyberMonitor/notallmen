@@ -97,7 +97,6 @@ export default {
 
     generateImage() {
       var imageNum = Math.floor(Math.random() * this.numImages + 1);
-      console.log(imageNum);
       this.image = imageNum;
     },
 

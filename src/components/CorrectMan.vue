@@ -141,7 +141,7 @@ export default {
         this.speaking = true;
         this.$emit("interrupting", index);
         this.health = 1;
-        const sound = new Audio(require("@/assets/manspeak.mp3")).play();
+        new Audio(require("@/assets/manspeak.mp3")).play();
         setTimeout(() => (this.speaking = false), 800);
         return;
       }
