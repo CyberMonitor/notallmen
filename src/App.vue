@@ -98,6 +98,7 @@ export default {
   created() {
     if (this.max_x <= 1000) {
       this.showMobileBlock = true;
+      return;
     }
 
     window.addEventListener("click", this.startGame);
