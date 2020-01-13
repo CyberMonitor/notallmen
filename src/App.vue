@@ -50,7 +50,7 @@
           </p>
         </div>
       </div>
-      <div v-if="!gameBegun" class="info-screen">
+      <div class="info-screen">
         <p>
           Sorry! Not All Men is only available on desktop or laptop.
         </p>
