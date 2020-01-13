@@ -34,7 +34,7 @@
       </div>
     </transition>
     <transition name="fade">
-      <div v-if="!gameBegun" class="info-screen">
+      <div v-if="!gameBegun && !showMobileBlock" class="info-screen">
         <h2 style="color: #da9295;">Not All Men</h2>
         <p><span style="color: #de9c8c">WASD</span> - Move</p>
         <p><span style="color: #de9c8c">Spacebar</span> - Correct</p>
@@ -49,6 +49,11 @@
             TW: Contains descriptions of sexual abuse and violence.
           </p>
         </div>
+      </div>
+      <div v-if="!gameBegun" class="info-screen">
+        <p>
+          Sorry! Not All Men is only available on desktop or laptop.
+        </p>
       </div>
     </transition>
     <Achievements ref="achievements" />
@@ -87,9 +92,14 @@ export default {
     subwaveLength: 10, //milliseconds
     womanCreationIntervalTime: 2, //milliseconds. halved with each subwave. resets on new wave
     gameEnded: false,
-    wokeAchievementPossible: true
+    wokeAchievementPossible: true,
+    showMobileBlock: false
   }),
   created() {
+    if (this.max_x <= 1000) {
+      this.showMobileBlock = true;
+    }
+
     window.addEventListener("click", this.startGame);
     window.addEventListener("keydown", this.startGame);
     window.addEventListener("resize", this.resizeGamescreen);
@@ -98,6 +108,12 @@ export default {
     resizeGamescreen() {
       this.max_x = window.innerWidth - 250;
       this.max_y = window.innerHeight - 200;
+
+      if (this.max_x <= 1000) {
+        this.showMobileBlock = true;
+      } else {
+        this.showMobileBlock = false;
+      }
     },
 
     startGame() {
@@ -172,7 +188,6 @@ export default {
 
       var lady = { x: x_pos, y: y_pos, interrupted: false };
       this.womenLocations.push(lady);
-      
     },
 
     closeToOther(x_pos, y_pos) {
@@ -193,9 +208,9 @@ export default {
         this.$refs.women[womanIndex].image == "1" ||
         this.$refs.women[womanIndex].image == "4" ||
         this.$refs.women[womanIndex].image == "5" ||
-        this.$refs.women[womanIndex].image == "6"||
-        this.$refs.women[womanIndex].image == "8"||
-        this.$refs.women[womanIndex].image == "10"||
+        this.$refs.women[womanIndex].image == "6" ||
+        this.$refs.women[womanIndex].image == "8" ||
+        this.$refs.women[womanIndex].image == "10" ||
         this.$refs.women[womanIndex].image == "11"
       ) {
         this.wokeAchievementPossible = false;
@@ -225,7 +240,7 @@ export default {
       for (var i = 0; i < totalWomen; i++) {
         this.interruptWoman(i);
       }
-      setTimeout(() => this.womenLocations = [], 500);
+      setTimeout(() => (this.womenLocations = []), 500);
       new Audio(require("@/assets/manyelling.mp3")).play();
       this.startNewWave();
     },
