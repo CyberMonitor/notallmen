@@ -50,7 +50,7 @@
           </p>
         </div>
       </div>
-      <div class="info-screen">
+      <div v-if="showMobileBlock" class="info-screen">
         <p>
           Sorry! Not All Men is only available on desktop or laptop.
         </p>
