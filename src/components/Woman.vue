@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     imgUrl(pic) {
-      return require("@/assets/images/woman" + 1 + ".png");
+      return require("@/assets/images/woman" + pic + ".png");
     },
     speak() {
       this.speaking = true;
