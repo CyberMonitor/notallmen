@@ -96,7 +96,7 @@ export default {
     showMobileBlock: false
   }),
   created() {
-    if (this.max_x <= 1000) {
+    if (this.max_x <= 800) {
       this.showMobileBlock = true;
       return;
     }
@@ -110,7 +110,7 @@ export default {
       this.max_x = window.innerWidth - 250;
       this.max_y = window.innerHeight - 200;
 
-      if (this.max_x <= 1000) {
+      if (this.max_x <= 800) {
         this.showMobileBlock = true;
       } else {
         this.showMobileBlock = false;
