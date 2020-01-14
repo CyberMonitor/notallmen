@@ -12,12 +12,16 @@
       {{ yellingText }}
     </div>
     <div v-bind:style="{ opacity: Math.max(this.health, 0) }">
-      <div v-if="movingLeft"><img src="@/assets/images/correctmanleft.png"></div>
-      <div v-else-if="movingRight"><img src="@/assets/images/correctmanright.png"></div>
-      <div v-else-if="yelling">
-        <img src="@/assets/images/correctmanmegaphone.png">
+      <div v-if="movingLeft">
+        <img src="@/assets/images/correctmanleft.png" />
       </div>
-      <div v-else><img src="@/assets/images/correctman.png"></div>
+      <div v-else-if="movingRight">
+        <img src="@/assets/images/correctmanright.png" />
+      </div>
+      <div v-else-if="yelling">
+        <img src="@/assets/images/correctmanmegaphone.png" />
+      </div>
+      <div v-else><img src="@/assets/images/correctman.png" /></div>
     </div>
   </div>
 </template>
@@ -39,13 +43,9 @@ export default {
     speaking: false,
     yelling: false,
     yellingText: "",
-    health: 1, //float, goes from 1 to -0.1. Goes into the negatives a little to make it feel "fair" to the player.
-    os: 0
+    health: 1 //float, goes from 1 to -0.1. Goes into the negatives a little to make it feel "fair" to the player.
   }),
   created() {
-    if (navigator.appVersion.indexOf("Win") != -1) {
-      this.os = 1;
-    }
     window.addEventListener("keydown", e => {
       if (e.keyCode === 87 /* w */) {
         this.up = true;
