@@ -36,7 +36,7 @@
     <transition name="fade">
       <div v-if="!gameBegun && !showMobileBlock" class="info-screen">
         <h2 style="color: #da9295;">Not All Men</h2>
-        <p><span style="color: #de9c8c">WASD</span> - Move</p>
+        <p><span style="color: #de9c8c">WASD</span> / <span style="color: #de9c8c">ZQSD</span> - Move</p>
         <p><span style="color: #de9c8c">Spacebar</span> - Correct</p>
         <p>
           Correct women to <span style="color: #da9295">stay relevant!</span>

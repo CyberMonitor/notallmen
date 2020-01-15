@@ -47,16 +47,16 @@ export default {
   }),
   created() {
     window.addEventListener("keydown", e => {
-      if (e.keyCode === 87 /* w */) {
+      if (e.keyCode === 87 || e.keyCode === 38 || e.keyCode === 90/* w or up arrow or z*/) {
         this.up = true;
       }
-      if (e.keyCode === 68 /* d */) {
+      if (e.keyCode === 68 || e.keyCode === 39/* d or right arrow*/) {
         this.right = true;
       }
-      if (e.keyCode === 83 /* s */) {
+      if (e.keyCode === 83 || e.keyCode === 40/* s or down arrow*/) {
         this.down = true;
       }
-      if (e.keyCode === 65 /* a */) {
+      if (e.keyCode === 65 || e.keyCode === 37 || e.keyCode === 81 /* a or left arrow or q*/) {
         this.left = true;
       }
       if (e.keyCode === 32 /* a */) {
@@ -65,16 +65,16 @@ export default {
     });
 
     window.addEventListener("keyup", e => {
-      if (e.keyCode === 87 /* w */) {
+      if (e.keyCode === 87 || e.keyCode === 38 || e.keyCode === 90/* w or up arrow or z*/) {
         this.up = false;
       }
-      if (e.keyCode === 68 /* d */) {
+      if (e.keyCode === 68 || e.keyCode === 39/* d or right arrow*/) {
         this.right = false;
       }
-      if (e.keyCode === 83 /* s */) {
+      if (e.keyCode === 83 || e.keyCode === 40/* s or down arrow*/) {
         this.down = false;
       }
-      if (e.keyCode === 65 /* a */) {
+       if (e.keyCode === 65 || e.keyCode === 37 || e.keyCode === 81 /* a or left arrow or q*/) {
         this.left = false;
       }
     });
